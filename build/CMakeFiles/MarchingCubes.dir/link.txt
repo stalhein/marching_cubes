@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/MarchingCubes.dir/link.d CMakeFiles/MarchingCubes.dir/src/main.cpp.o CMakeFiles/MarchingCubes.dir/external/glad/src/glad.c.o -o MarchingCubes  _deps/glfw-build/src/libglfw3.a _deps/glm-build/glm/libglm.a /usr/lib/librt.a -lm -ldl /usr/lib/libX11.so /usr/lib/libGLX.so /usr/lib/libOpenGL.so
