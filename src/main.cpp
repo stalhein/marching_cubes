@@ -11,6 +11,7 @@
 #include "camera.hpp"
 #include "settings.hpp"
 #include "chunk.hpp"
+#include "FastNoiseLite.hpp"
 
 int w = SCR_WIDTH, h = SCR_HEIGHT;
 
@@ -72,17 +73,28 @@ int main() {
 
   std::vector<Chunk> chunks;
 
+  FastNoiseLite nosie;
+  nosie.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+  nosie.SetFrequency(0.02f);
+  nosie.SetFractalOctaves(2);
+  nosie.SetFractalType(FastNoiseLite::FractalType_FBm);
 
   for (int x = 0; x < 8; ++x) {
-    for (int z = 0; z < 8; ++z) {
-      chunks.push_back(Chunk({(float)x, 0.f, (float)z}));
+    for (int y = 0; y < 8; ++y) {
+      for (int z = 0; z < 8; ++z) {
+        chunks.push_back(Chunk({(float)x, (float)y, (float)z}, &nosie));
+      }
     }
   }
 
+  double terrain = 0.0;
+  double mesh = 0.0;
+
   for (int i = 0; i < chunks.size(); ++i) {
-    chunks[i].generate();
+    chunks[i].generate(&terrain, &mesh);
   }
 
+  std::cout << terrain << " " << mesh << "\n";
 
   int fbWidth, fbHeight;
   glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
@@ -97,7 +109,7 @@ int main() {
 
 
     // Render
-    glClearColor(0.f, 0.f, 0.f, 1.f);
+    glClearColor(0.6f, 0.8f, 0.9f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glm::mat4 projection = glm::perspective(
