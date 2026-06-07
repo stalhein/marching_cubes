@@ -37,12 +37,21 @@ void Chunk::generate(double *terrainTime, double *meshTime) {
   double next = glfwGetTime();
   *terrainTime += next - now;
 
-  for (int x = 1; x < SIZE; ++x) {
-    for (int y = 1; y < SIZE; ++y) {
-      for (int z = 1; z < SIZE; ++z) {
-        float dx = densities[idx(x+1, y, z)] - densities[idx(x-1, y, z)];
-        float dy = densities[idx(x, y+1, z)] - densities[idx(x, y-1, z)];
-        float dz = densities[idx(x, y, z+1)] - densities[idx(x, y, z-1)];
+  for (int x = 0; x <= SIZE; ++x) {
+    for (int y = 0; y <= SIZE; ++y) {
+      for (int z = 0; z <= SIZE; ++z) {
+        float dx = 0.f;
+        float dy = 0.f;
+        float dz = 0.f;
+        if (x == 0 || y == 0 || z == 0 || x == SIZE || y == SIZE || z == SIZE) {
+          dx = getDensity(x+1, y, z) - getDensity(x-1, y, z);
+          dy = getDensity(x, y+1, z) - getDensity(x, y-1, z);
+          dz = getDensity(x, y, z+1) - getDensity(x, y, z-1);
+        } else {
+          dx = densities[idx(x+1, y, z)] - densities[idx(x-1, y, z)];
+          dy = densities[idx(x, y+1, z)] - densities[idx(x, y-1, z)];
+          dz = densities[idx(x, y, z+1)] - densities[idx(x, y, z-1)];
+        }
 
         gradients[idx(x, y, z)] = -glm::normalize(glm::vec3(dx, dy, dz));
       }

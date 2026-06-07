@@ -79,9 +79,9 @@ int main() {
   nosie.SetFractalOctaves(2);
   nosie.SetFractalType(FastNoiseLite::FractalType_FBm);
 
-  for (int x = 0; x < 8; ++x) {
-    for (int y = 0; y < 8; ++y) {
-      for (int z = 0; z < 8; ++z) {
+  for (int x = 0; x < 5; ++x) {
+    for (int y = 0; y < 5; ++y) {
+      for (int z = 0; z < 5; ++z) {
         chunks.push_back(Chunk({(float)x, (float)y, (float)z}, &nosie));
       }
     }

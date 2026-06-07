@@ -1,3 +1,7 @@
+# Marching Cubes Renderer
+Renders procedural terrain using marching cubes.
+
+Currently just samples random 3D noise and looks a bit like cheese.
 
 ## Build and run instructions
 1. **Generate build files and get dependencies:**
