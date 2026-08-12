@@ -8,6 +8,41 @@
 #include <iostream>
 #include <string>
 
+constexpr char v[] = 
+  "#version 330 core\n"
+
+  "layout (location=0) in vec3 aPos;\n"
+  "layout (location=1) in vec3 aNormal;\n"
+
+  "uniform mat4 uProjection;\n"
+  "uniform mat4 uView;\n"
+  "uniform mat4 uModel;\n"
+
+  "out vec3 Normal;\n"
+
+  "void main() {\n"
+  "  gl_Position = uProjection * uView * uModel * vec4(aPos, 1.0);\n"
+
+  "  Normal = aNormal;\n"
+  "}";
+
+constexpr char f[] = 
+  "#version 330 core\n"
+
+  "out vec4 FragColor;\n"
+
+  "in vec3 Normal;\n"
+
+
+
+  "const vec3 lightDirection = normalize(vec3(1.0, 1.0, 1.0));\n"
+
+  "void main() {\n"
+  "  float diffuse = max(dot(normalize(Normal), lightDirection), 0.0);\n"
+  "  vec3 colour = vec3(0.2, 0.7, 0.1) + diffuse * vec3(0.4);\n"
+  "  FragColor = vec4(colour, 1.0);\n"
+  "}";
+
 class Shader {
 public:
   GLuint ID;
@@ -15,8 +50,11 @@ public:
   Shader(const char* vertexPath, const char* fragmentPath) {
     std::string vertexString, fragmentString;
     
-    vertexString = readFile(vertexPath);
-    fragmentString = readFile(fragmentPath);
+    //vertexString = readFile(vertexPath);
+    //fragmentString = readFile(fragmentPath);
+
+    vertexString = v;
+    fragmentString = f;
 
     const char* vertexSource = vertexString.c_str();
     const char* fragmentSource = fragmentString.c_str();

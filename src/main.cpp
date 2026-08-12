@@ -11,7 +11,6 @@
 #include "camera.hpp"
 #include "settings.hpp"
 #include "chunk.hpp"
-#include "FastNoiseLite.hpp"
 
 int w = SCR_WIDTH, h = SCR_HEIGHT;
 
@@ -66,6 +65,7 @@ int main() {
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_MULTISAMPLE);
+  glEnable(GL_CULL_FACE);
 
   //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -73,28 +73,17 @@ int main() {
 
   std::vector<Chunk> chunks;
 
-  FastNoiseLite nosie;
-  nosie.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-  nosie.SetFrequency(0.02f);
-  nosie.SetFractalOctaves(2);
-  nosie.SetFractalType(FastNoiseLite::FractalType_FBm);
-
-  for (int x = 0; x < 5; ++x) {
-    for (int y = 0; y < 5; ++y) {
-      for (int z = 0; z < 5; ++z) {
-        chunks.push_back(Chunk({(float)x, (float)y, (float)z}, &nosie));
+  for (int x = 0; x < 10; ++x) {
+    for (int y = 0; y < CHUNK_HEIGHT; ++y) {
+      for (int z = 0; z < 10; ++z) {
+        chunks.push_back(Chunk({(float)x, (float)y, (float)z}));
       }
     }
   }
 
-  double terrain = 0.0;
-  double mesh = 0.0;
-
   for (int i = 0; i < chunks.size(); ++i) {
-    chunks[i].generate(&terrain, &mesh);
+    chunks[i].generate();
   }
-
-  std::cout << terrain << " " << mesh << "\n";
 
   int fbWidth, fbHeight;
   glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
@@ -106,7 +95,6 @@ int main() {
     lastFrame = currentTime;
 
     processInput(window);
-
 
     // Render
     glClearColor(0.6f, 0.8f, 0.9f, 1.f);

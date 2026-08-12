@@ -5,7 +5,7 @@
 
 enum CameraDirections {FORWARD, BACKWARD, UP, DOWN, RIGHT, LEFT };
 
-constexpr float SPEED = 20.f;
+constexpr float SPEED = 80.f;
 constexpr float SENSITIVITY = 0.1f;
 
 class Camera {

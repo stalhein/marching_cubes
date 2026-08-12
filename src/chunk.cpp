@@ -5,60 +5,58 @@ glm::vec3 interpolateVertex(glm::vec3 p1, glm::vec3 p2, float d1, float d2) {
   return p1 + t * (p2 - p1);
 }
 
-float Chunk::getDensity(float x, float y, float z) {
-  return noise->GetNoise(x + position.x * SIZE, y + position.y * SIZE, z + position.z * SIZE) * 10.f;
-}
-
 glm::vec3 Chunk::getNormal(int x, int y, int z) {
   const int eps = 1;
-  float dx = densities[idx(x+eps, y, z)] - densities[idx(x-eps, y, z)];
-  float dy = densities[idx(x, y+eps, z)] - densities[idx(x, y-eps, z)];
-  float dz = densities[idx(x, y, z+eps)] - densities[idx(x, y, z-eps)];
+  float dx = paddedDensities[idx(x+eps, y, z)] - paddedDensities[idx(x-eps, y, z)];
+  float dy = paddedDensities[idx(x, y+eps, z)] - paddedDensities[idx(x, y-eps, z)];
+  float dz = paddedDensities[idx(x, y, z+eps)] - paddedDensities[idx(x, y, z-eps)];
 
   return -glm::normalize(glm::vec3(dx, dy, dz));
 }
 
-Chunk::Chunk(glm::vec3 chunkPosition, FastNoiseLite *n) : position(chunkPosition), noise(n) {
+Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
   model = glm::translate(
     glm::mat4(1.0f),
     position * (float)SIZE
   );
+
+  main = FastNoise::New<FastNoise::Simplex>();
+  mainFractal = FastNoise::New<FastNoise::FractalRidged>();
+  detail = FastNoise::New<FastNoise::Simplex>();
+  detailFractal = FastNoise::New<FastNoise::FractalFBm>();
+
+  main->SetScale(1000.f);
+  detail->SetScale(120.f);
+  mainFractal->SetSource(main);
+  mainFractal->SetOctaveCount(4);
+  detailFractal->SetSource(detail);
+  detailFractal->SetOctaveCount(5);
 }
 
-void Chunk::generate(double *terrainTime, double *meshTime) {
-  double now = glfwGetTime();
-  for (int x = 0; x <= SIZE; ++x) {
-    for (int y = 0; y <= SIZE; ++y) {
-      for (int z = 0; z <= SIZE; ++z) {
-        densities[idx(x, y, z)] = getDensity((float)x, (float)y, (float)z);
-      }
-    }
-  }
-  double next = glfwGetTime();
-  *terrainTime += next - now;
+void Chunk::generate() {
+  int chunkX = position.x * SIZE;
+  int chunkY = position.y * SIZE;
+  int chunkZ = position.z * SIZE;
 
-  for (int x = 0; x <= SIZE; ++x) {
-    for (int y = 0; y <= SIZE; ++y) {
-      for (int z = 0; z <= SIZE; ++z) {
-        float dx = 0.f;
-        float dy = 0.f;
-        float dz = 0.f;
-        if (x == 0 || y == 0 || z == 0 || x == SIZE || y == SIZE || z == SIZE) {
-          dx = getDensity(x+1, y, z) - getDensity(x-1, y, z);
-          dy = getDensity(x, y+1, z) - getDensity(x, y-1, z);
-          dz = getDensity(x, y, z+1) - getDensity(x, y, z-1);
-        } else {
-          dx = densities[idx(x+1, y, z)] - densities[idx(x-1, y, z)];
-          dy = densities[idx(x, y+1, z)] - densities[idx(x, y-1, z)];
-          dz = densities[idx(x, y, z+1)] - densities[idx(x, y, z-1)];
-        }
+  mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+  detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
 
-        gradients[idx(x, y, z)] = -glm::normalize(glm::vec3(dx, dy, dz));
+  #pragma omp parallel for collapse(3)
+  for (int x = -1; x <= SIZE+1; ++x) {
+    for (int y = -1; y <= SIZE+1; ++y) {
+      for (int z = -1; z <= SIZE+1; ++z) {
+        float heightValue = (heightMap[(z+1) * (SIZE+3) + x + 1]+1.f)*0.5f;
+        float detailValue = (detailDensities[(z+1)*(SIZE+3)*(SIZE+3)+(y+1)*(SIZE+3)+x+1]+1.f)*0.5f;
+
+        float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
+        paddedDensities[idx(x, y, z)] = base + detailValue*WORLD_HEIGHT * 0.1;
       }
     }
   }
 
-  vertices.reserve(100000);
+
+  vertices.reserve(SIZE*SIZE*SIZE*5);
+  #pragma omp parallel for collapse(3)
   for (int x = 0; x < SIZE; ++x) {
     for (int y = 0; y < SIZE; ++y) {
       for (int z = 0; z < SIZE; ++z) {
@@ -73,24 +71,24 @@ void Chunk::generate(double *terrainTime, double *meshTime) {
           {x, y+1, z+1}
         };
         float cornerDensities[8] = {
-          densities[idx(x, y, z)],
-          densities[idx(x+1, y, z)],
-          densities[idx(x+1, y+1, z)],
-          densities[idx(x, y+1, z)],
-          densities[idx(x, y, z+1)],
-          densities[idx(x+1, y, z+1)],
-          densities[idx(x+1, y+1, z+1)],
-          densities[idx(x, y+1, z+1)]
+          paddedDensities[idx(x, y, z)],
+          paddedDensities[idx(x+1, y, z)],
+          paddedDensities[idx(x+1, y+1, z)],
+          paddedDensities[idx(x, y+1, z)],
+          paddedDensities[idx(x, y, z+1)],
+          paddedDensities[idx(x+1, y, z+1)],
+          paddedDensities[idx(x+1, y+1, z+1)],
+          paddedDensities[idx(x, y+1, z+1)]
         };
         glm::vec3 cornerGradients[8] = {
-          gradients[idx(x, y, z)],
-          gradients[idx(x+1, y, z)],
-          gradients[idx(x+1, y+1, z)],
-          gradients[idx(x, y+1, z)],
-          gradients[idx(x, y, z+1)],
-          gradients[idx(x+1, y, z+1)],
-          gradients[idx(x+1, y+1, z+1)],
-          gradients[idx(x, y+1, z+1)]
+          gradients[idxGradients(x, y, z)],
+          gradients[idxGradients(x+1, y, z)],
+          gradients[idxGradients(x+1, y+1, z)],
+          gradients[idxGradients(x, y+1, z)],
+          gradients[idxGradients(x, y, z+1)],
+          gradients[idxGradients(x+1, y, z+1)],
+          gradients[idxGradients(x+1, y+1, z+1)],
+          gradients[idxGradients(x, y+1, z+1)]
         };
 
         int cube = 0;
@@ -104,14 +102,12 @@ void Chunk::generate(double *terrainTime, double *meshTime) {
         if (edges == 0) continue;
 
         glm::vec3 edgeVertices[12];
-        glm::vec3 edgeNormals[12];
         for (int i = 0; i < 12; ++i) {
           if (!(edges & (1 << i))) continue;
           int a = edgeConnexions[i][0];
           int b = edgeConnexions[i][1];
           float f = (ISO - cornerDensities[a]) / (cornerDensities[b] - cornerDensities[a]);
           edgeVertices[i] = cornerPositions[a] + f * (cornerPositions[b] - cornerPositions[a]);
-          edgeNormals[i] = glm::normalize(cornerGradients[a] + f * (cornerGradients[b] - cornerGradients[a]));
         }
 
         for (int i = 0; triTable[cube][i] != -1; i+=3) {
@@ -123,38 +119,36 @@ void Chunk::generate(double *terrainTime, double *meshTime) {
           glm::vec3 v2 = {edgeVertices[b][0], edgeVertices[b][1], edgeVertices[b][2]};
           glm::vec3 v3 = {edgeVertices[c][0], edgeVertices[c][1], edgeVertices[c][2]};
 
-          glm::vec3 n1 = edgeNormals[a];
-          glm::vec3 n2 = edgeNormals[b];
-          glm::vec3 n3 = edgeNormals[c];
-
+          glm::vec3 edge1 = v2 - v1;
+          glm::vec3 edge2 = v3 - v1;
+          glm::vec3 n = glm::normalize(glm::cross(edge1, edge2));
 
           vertices.push_back(v1.x);
           vertices.push_back(v1.y);
           vertices.push_back(v1.z);
 
-          vertices.push_back(n1.x);
-          vertices.push_back(n1.y);
-          vertices.push_back(n1.z);
+          vertices.push_back(n.x);
+          vertices.push_back(n.y);
+          vertices.push_back(n.z);
 
           vertices.push_back(v2.x);
           vertices.push_back(v2.y);
           vertices.push_back(v2.z);
 
-          vertices.push_back(n2.x);
-          vertices.push_back(n2.y);
-          vertices.push_back(n2.z);
+          vertices.push_back(n.x);
+          vertices.push_back(n.y);
+          vertices.push_back(n.z);
          
           vertices.push_back(v3.x);
           vertices.push_back(v3.y);
           vertices.push_back(v3.z);
         
-          vertices.push_back(n3.x);
-          vertices.push_back(n3.y);
-          vertices.push_back(n3.z);
+          vertices.push_back(n.x);
+          vertices.push_back(n.y);
+          vertices.push_back(n.z);
         }
       }
     }
-    *meshTime += glfwGetTime() - next;
   }
 
 

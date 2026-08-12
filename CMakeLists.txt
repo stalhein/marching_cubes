@@ -35,7 +35,10 @@ find_package(OpenGL REQUIRED)
 
 file(GLOB_RECURSE SRC_FILES "src/*.cpp")
 
+add_subdirectory(external/FastNoise2)
+
 add_executable(MarchingCubes ${SRC_FILES} external/glad/src/glad.c)
+set(CMAKE_CXX_FLAGS "-O3")
 
 target_include_directories(MarchingCubes PRIVATE
   src
@@ -47,6 +50,7 @@ target_link_libraries(MarchingCubes PRIVATE
   glfw
   OpenGL::GL
   glm::glm
+  FastNoise
 )
 
 if (WIN32)
@@ -58,3 +62,5 @@ add_custom_target(run
   DEPENDS MarchingCubes
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
+
+install(TARGETS MarchingCubes DESTINATION bin)

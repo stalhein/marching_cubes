@@ -1,6 +1,4 @@
 build/
 compile_commands.json
-appimagetool-x86_64.AppImage 
-linuxdeploy-x86_64.AppImage 
-MarchingCubes.AppDir/
-Marching_Cubes-x86_64.AppImage 
+MarchingCubes.desktop
+marchingcubes.png
