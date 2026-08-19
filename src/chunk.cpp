@@ -47,8 +47,14 @@ void Chunk::generate() {
     int chunkZ = position.z * SIZE;
 
     auto start = std::chrono::high_resolution_clock::now();
-    mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
-    detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
+
+    #pragma omp parallel sections
+    {
+        #pragma omp section
+        mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+        #pragma omp section
+        detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
+    }
 
     #pragma omp parallel for collapse(3)
     for (int x = -1; x <= SIZE+1; ++x) {
