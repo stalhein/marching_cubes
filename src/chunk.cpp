@@ -31,7 +31,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     main->SetScale(1000.f);
     detail->SetScale(120.f);
     mainFractal->SetSource(main);
-    mainFractal->SetOctaveCount(4);
+    mainFractal->SetOctaveCount(2);
     detailFractal->SetSource(detail);
     detailFractal->SetOctaveCount(5);
     
@@ -75,7 +75,6 @@ void Chunk::generate() {
 
     start = std::chrono::high_resolution_clock::now();
     vertices.reserve(SIZE*SIZE*SIZE*5);
-    #pragma omp parallel for collapse(3)
     for (int x = 0; x < SIZE; ++x) {
         for (int y = 0; y < SIZE; ++y) {
             for (int z = 0; z < SIZE; ++z) {
