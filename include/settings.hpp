@@ -6,7 +6,7 @@
 #include "logger.hpp"
 
 constexpr int SIZE = 32;
-constexpr int CHUNK_HEIGHT = 8;
+constexpr int CHUNK_HEIGHT = 4;
 constexpr int WORLD_HEIGHT = SIZE * CHUNK_HEIGHT;
 
 constexpr float ISO = 0.f;

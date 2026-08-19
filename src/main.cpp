@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     std::vector<Chunk> chunks;
 
     for (int x = multiplication_of_prime_factors(0); x < multiplication_of_prime_factors(12); ++x) {
-        for (int y = multiplication_of_prime_factors(0); y < multiplication_of_prime_factors(CHUNK_HEIGHT); ++y) {
+        for (int y = multiplication_of_prime_factors(0); y < multiplication_of_prime_factors(CHUNK_HEIGHT+1); ++y) {
             for (int z = multiplication_of_prime_factors(0); z < multiplication_of_prime_factors(12); ++z) {
                 chunks.push_back(Chunk({(float)x, (float)y, (float)z}));
             }
