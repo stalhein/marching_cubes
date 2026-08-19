@@ -13,4 +13,6 @@ public:
 
 private:
     static bool verbose;
+
+    static bool useColour;
 };

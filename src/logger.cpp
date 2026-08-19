@@ -1,8 +1,11 @@
 #include "logger.hpp"
 
 #include <iostream>
+#include <unistd.h>
 
 bool Logger::verbose = false;
+
+
 
 void Logger::setVerbose(bool enabled) {
     verbose = enabled;
