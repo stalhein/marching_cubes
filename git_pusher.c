@@ -27,9 +27,10 @@ int main(int argc, char *argv[]) {
         int r = system(command);
         if (r != 0) {
             printf("Git commit failed (%d)\n", r);
+        } else {
+            commit++;
         }
 
-        commit++;
         sleep(pause);
     }
 
