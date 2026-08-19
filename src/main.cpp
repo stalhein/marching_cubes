@@ -27,7 +27,7 @@ void framebuffer_size_callback(GLFWwindow *, int width, int height);
 void mouse_callback(GLFWwindow *window, double xposIn, double yposIn);
 void processInput(GLFWwindow *window);
 void glfw_error_callback(int error, const char* description) {
-  std::cerr << "GLFW Error " << error
+    std::cerr << "GLFW Error " << error
             << ": " << description << '\n';
 }
 
