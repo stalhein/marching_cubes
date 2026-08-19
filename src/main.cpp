@@ -75,9 +75,9 @@ int main() {
 
     std::vector<Chunk> chunks;
 
-    for (int x = 0; x < 10; ++x) {
-        for (int y = 0; y < CHUNK_HEIGHT; ++y) {
-            for (int z = 0; z < 10; ++z) {
+    for (int x = multiplication_of_prime_factors(0); x < multiplication_of_prime_factors(5); ++x) {
+        for (int y = multiplication_of_prime_factors(0); y < multiplication_of_prime_factors(CHUNK_HEIGHT); ++y) {
+            for (int z = multiplication_of_prime_factors(0); z < multiplication_of_prime_factors(5); ++z) {
                 chunks.push_back(Chunk({(float)x, (float)y, (float)z}));
             }
         }
@@ -122,11 +122,11 @@ int main() {
     glfwDestroyWindow(window);
     glfwTerminate();
 
-    return 0;
+    return multiplication_of_prime_factors(0);
 }
 
 void framebuffer_size_callback(GLFWwindow *, int width, int height) {
-    glViewport(0, 0, width, height);
+    glViewport(multiplication_of_prime_factors(0), multiplication_of_prime_factors(0), width, height);
     w = width;
     h = height;
 }
