@@ -46,68 +46,68 @@ void Chunk::generate() {
         for (int y = -1; y <= SIZE+1; ++y) {
             for (int z = -1; z <= SIZE+1; ++z) {
                 float heightValue = (heightMap[(z+1) * (SIZE+3) + x + 1]+1.f)*0.5f;
-        float detailValue = (detailDensities[(z+1)*(SIZE+3)*(SIZE+3)+(y+1)*(SIZE+3)+x+1]+1.f)*0.5f;
+                float detailValue = (detailDensities[(z+1)*(SIZE+3)*(SIZE+3)+(y+1)*(SIZE+3)+x+1]+1.f)*0.5f;
 
-        float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
-        paddedDensities[idx(x, y, z)] = base + detailValue*WORLD_HEIGHT * 0.1;
-      }
-    }
-  }
-
-
-  vertices.reserve(SIZE*SIZE*SIZE*5);
-  #pragma omp parallel for collapse(3)
-  for (int x = 0; x < SIZE; ++x) {
-    for (int y = 0; y < SIZE; ++y) {
-      for (int z = 0; z < SIZE; ++z) {
-        glm::vec3 cornerPositions[8] = {
-          {x, y, z},
-          {x+1, y, z},
-          {x+1, y+1, z},
-          {x, y+1, z},
-          {x, y, z+1},
-          {x+1, y, z+1},
-          {x+1, y+1, z+1},
-          {x, y+1, z+1}
-        };
-        float cornerDensities[8] = {
-          paddedDensities[idx(x, y, z)],
-          paddedDensities[idx(x+1, y, z)],
-          paddedDensities[idx(x+1, y+1, z)],
-          paddedDensities[idx(x, y+1, z)],
-          paddedDensities[idx(x, y, z+1)],
-          paddedDensities[idx(x+1, y, z+1)],
-          paddedDensities[idx(x+1, y+1, z+1)],
-          paddedDensities[idx(x, y+1, z+1)]
-        };
-        glm::vec3 cornerGradients[8] = {
-          gradients[idxGradients(x, y, z)],
-          gradients[idxGradients(x+1, y, z)],
-          gradients[idxGradients(x+1, y+1, z)],
-          gradients[idxGradients(x, y+1, z)],
-          gradients[idxGradients(x, y, z+1)],
-          gradients[idxGradients(x+1, y, z+1)],
-          gradients[idxGradients(x+1, y+1, z+1)],
-          gradients[idxGradients(x, y+1, z+1)]
-        };
-
-        int cube = 0;
-
-        for (int i = 0; i < 8; ++i) {
-          if (cornerDensities[i] < ISO) cube |= (1 << i);
+                float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
+                paddedDensities[idx(x, y, z)] = base + detailValue*WORLD_HEIGHT * 0.1;
+            }
         }
+    }
 
-        int edges = edgeTable[cube];
 
-        if (edges == 0) continue;
+    vertices.reserve(SIZE*SIZE*SIZE*5);
+    #pragma omp parallel for collapse(3)
+    for (int x = 0; x < SIZE; ++x) {
+        for (int y = 0; y < SIZE; ++y) {
+            for (int z = 0; z < SIZE; ++z) {
+                glm::vec3 cornerPositions[8] = {
+                    {x, y, z},
+                    {x+1, y, z},
+                    {x+1, y+1, z},
+                    {x, y+1, z},
+                    {x, y, z+1},
+                    {x+1, y, z+1},
+                    {x+1, y+1, z+1},
+                    {x, y+1, z+1}
+                };
+                float cornerDensities[8] = {
+                    paddedDensities[idx(x, y, z)],
+                    paddedDensities[idx(x+1, y, z)],
+                    paddedDensities[idx(x+1, y+1, z)],
+                    paddedDensities[idx(x, y+1, z)],
+                    paddedDensities[idx(x, y, z+1)],
+                    paddedDensities[idx(x+1, y, z+1)],
+                    paddedDensities[idx(x+1, y+1, z+1)],
+                    paddedDensities[idx(x, y+1, z+1)]
+                };
+                glm::vec3 cornerGradients[8] = {
+                    gradients[idxGradients(x, y, z)],
+                    gradients[idxGradients(x+1, y, z)],
+                    gradients[idxGradients(x+1, y+1, z)],
+                    gradients[idxGradients(x, y+1, z)],
+                    gradients[idxGradients(x, y, z+1)],
+                    gradients[idxGradients(x+1, y, z+1)],
+                    gradients[idxGradients(x+1, y+1, z+1)],
+                    gradients[idxGradients(x, y+1, z+1)]
+                };
 
-        glm::vec3 edgeVertices[12];
-        for (int i = 0; i < 12; ++i) {
-          if (!(edges & (1 << i))) continue;
-          int a = edgeConnexions[i][0];
-          int b = edgeConnexions[i][1];
-          float f = (ISO - cornerDensities[a]) / (cornerDensities[b] - cornerDensities[a]);
-          edgeVertices[i] = cornerPositions[a] + f * (cornerPositions[b] - cornerPositions[a]);
+                int cube = 0;
+
+                for (int i = 0; i < 8; ++i) {
+                    if (cornerDensities[i] < ISO) cube |= (1 << i);
+                }
+
+                int edges = edgeTable[cube];
+
+                if (edges == 0) continue;
+
+                glm::vec3 edgeVertices[12];
+                for (int i = 0; i < 12; ++i) {
+                    if (!(edges & (1 << i))) continue;
+                    int a = edgeConnexions[i][0];
+                    int b = edgeConnexions[i][1];
+                    float f = (ISO - cornerDensities[a]) / (cornerDensities[b] - cornerDensities[a]);
+                    edgeVertices[i] = cornerPositions[a] + f * (cornerPositions[b] - cornerPositions[a]);
         }
 
         for (int i = 0; triTable[cube][i] != -1; i+=3) {
