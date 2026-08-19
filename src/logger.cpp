@@ -5,7 +5,11 @@
 
 bool Logger::verbose = false;
 
+bool Logger::useColour = [] {
+    if (std::getenv("NO_COLOR") != nullptr) return false;
 
+    return isatty(STDOUT_FILENO);
+}();
 
 void Logger::setVerbose(bool enabled) {
     verbose = enabled;
