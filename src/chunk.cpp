@@ -51,21 +51,22 @@ void Chunk::generate() {
         #pragma omp section
         mainFractal->GenUniformGrid2D(baseMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
         #pragma omp section
-        mainFractal->GenUniformGrid2D(detailStrengthMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 4321);
+        main->GenUniformGrid2D(detailStrengthMap, chunkX, chunkZ, SIZE+3, SIZE+3, 1.f, 1.f, 4321);
         #pragma omp section 
         detailFractal->GenUniformGrid2D(detailMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
     }
 
     #pragma omp parallel for collapse(3) schedule(static)
     for (int x = 0; x <= SIZE+2; ++x) {
-        for (int y = 0; y <= SIZE+2; ++y) {
-            for (int z = 0; z <= SIZE+2; ++z) {
-                float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
-                float base = baseValue*WORLD_HEIGHT*0.6f + WORLD_HEIGHT * 0.2f;
+        for (int z = 0; z <= SIZE+2; ++z) {
+            float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
+            float base = baseValue*WORLD_HEIGHT*0.6f + WORLD_HEIGHT * 0.2f;
 
-                float detailValue = detailMap[z*(SIZE+3)+x]*0.5f;
-                float detail = detailValue * WORLD_HEIGHT * 0.1;
-                paddedDensities[idx(x-1, y-1, z-1)] = base + detail - (chunkY + y-1);
+            float detailValue = detailStrengthMap[z*(SIZE+3)+x] * detailMap[z*(SIZE+3)+x]*0.5f;
+            float detail = detailValue * WORLD_HEIGHT * 0.1;
+            paddedDensities[idx(x-1, y-1, z-1)] = base + detail - (chunkY + y-1);
+
+            for (int y = 0; y <= SIZE+2; ++y) {
             }
         }
     }
