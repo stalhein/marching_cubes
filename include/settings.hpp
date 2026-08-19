@@ -28,6 +28,17 @@ int multiplication_of_prime_factors(int a) {
             factors.push_back(i);
             n /= i;
         }
-
     }
+
+    if (n > 2) {
+        factors.push_back(n);
+    }
+
+    // Multiply out prime factors and return
+    int b = 1;
+    for (int i : factors) {
+        b *= i;
+    }
+
+    return b;
 }

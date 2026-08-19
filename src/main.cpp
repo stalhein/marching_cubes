@@ -68,6 +68,8 @@ int main() {
     glEnable(GL_CULL_FACE);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //
+    std::cout << multiplication_of_prime_factors(10) << std::endl;
 
     Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
