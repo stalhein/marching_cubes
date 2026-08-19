@@ -32,58 +32,58 @@ void glfw_error_callback(int error, const char* description) {
 }
 
 int main() {
-  glfwSetErrorCallback(glfw_error_callback);
-  if (!glfwInit()) {
-    std::cout << "Failed to initialize glfw." << std::endl;
-    return 1;
-  }
-
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_SAMPLES, 4);
-
-  GLFWwindow *window = glfwCreateWindow(w, h, "Marching Cubes", NULL, NULL);
-  if (!window) {
-    std::cout << "Failed to create window." << std::endl;
-    glfwTerminate();
-    return 1;
-  }
-
-  glfwMakeContextCurrent(window);
-  glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-  glfwSetCursorPosCallback(window, mouse_callback);
-
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-    std::cout << "Failed to load OpenGL." << std::endl;
-    glfwDestroyWindow(window);
-    glfwTerminate();
-    return 1;
-  }
-
-  glEnable(GL_DEPTH_TEST);
-  glEnable(GL_MULTISAMPLE);
-  glEnable(GL_CULL_FACE);
-
-  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-  Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
-
-  std::vector<Chunk> chunks;
-
-  for (int x = 0; x < 10; ++x) {
-    for (int y = 0; y < CHUNK_HEIGHT; ++y) {
-      for (int z = 0; z < 10; ++z) {
-        chunks.push_back(Chunk({(float)x, (float)y, (float)z}));
-      }
+    glfwSetErrorCallback(glfw_error_callback);
+    if (!glfwInit()) {
+        std::cout << "Failed to initialize glfw." << std::endl;
+        return 1;
     }
-  }
 
-  for (int i = 0; i < chunks.size(); ++i) {
-    chunks[i].generate();
-  }
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
+
+    GLFWwindow *window = glfwCreateWindow(w, h, "Marching Cubes", NULL, NULL);
+    if (!window) {
+        std::cout << "Failed to create window." << std::endl;
+        glfwTerminate();
+        return 1;
+    }
+
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_callback);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cout << "Failed to load OpenGL." << std::endl;
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return 1;
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_CULL_FACE);
+
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+
+    std::vector<Chunk> chunks;
+
+    for (int x = 0; x < 10; ++x) {
+        for (int y = 0; y < CHUNK_HEIGHT; ++y) {
+            for (int z = 0; z < 10; ++z) {
+                chunks.push_back(Chunk({(float)x, (float)y, (float)z}));
+            }
+        }
+    }
+
+    for (int i = 0; i < chunks.size(); ++i) {
+        chunks[i].generate();
+    }
 
   int fbWidth, fbHeight;
   glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
