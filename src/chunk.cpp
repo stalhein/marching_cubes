@@ -51,12 +51,12 @@ void Chunk::generate() {
         #pragma omp section
         mainFractal->GenUniformGrid2D(baseMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
         #pragma omp section
-        main->GenUniformGrid2D(detailStrengthMap, chunkX, chunkZ, SIZE+3, SIZE+3, 1.f, 1.f, 4321);
+        main->GenUniformGrid2D(detailStrengthMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 4321);
         #pragma omp section 
         detailFractal->GenUniformGrid2D(detailMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
     }
 
-    #pragma omp parallel for collapse(3) schedule(static)
+    #pragma omp parallel for collapse(2) schedule(static)
     for (int x = 0; x <= SIZE+2; ++x) {
         for (int z = 0; z <= SIZE+2; ++z) {
             float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
