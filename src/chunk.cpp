@@ -28,7 +28,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     detail = FastNoise::New<FastNoise::Simplex>();
     detailFractal = FastNoise::New<FastNoise::FractalFBm>();
 
-    main->SetScale(800.f);
+    main->SetScale(1000.f);
     mainFractal->SetSource(main);
     mainFractal->SetOctaveCount(4);
     detail->SetScale(50.f);
@@ -49,17 +49,20 @@ void Chunk::generate() {
     #pragma omp parallel sections
     {
         #pragma omp section
-        mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+        mainFractal->GenUniformGrid2D(baseMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+        #pragma omp section 
+        detailFractal->GenUniformGrid2D(detailMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
     }
 
     #pragma omp parallel for collapse(3) schedule(static)
     for (int x = 0; x <= SIZE+2; ++x) {
         for (int y = 0; y <= SIZE+2; ++y) {
             for (int z = 0; z <= SIZE+2; ++z) {
-                float heightValue = (heightMap[z * (SIZE+3) + x]+1.f)*0.5f;
+                float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
+                float base = baseValue*WORLD_HEIGHT*0.25f + WORLD_HEIGHT * 0.5 - (chunkY+y);
 
-                float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
-                paddedDensities[idx(x-1, y-1, z-1)] = base;
+                float detail = detailMap[z*(SIZE+3)+x]*0.5f * WORLD_HEIGHT * 0.1 - (chunkY + y);
+                paddedDensities[idx(x-1, y-1, z-1)] = base + detail;
             }
         }
     }
