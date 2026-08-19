@@ -64,7 +64,7 @@ void Chunk::generate() {
     }
     auto end = std::chrono::high_resolution_clock::now();
     double m = std::chrono::duration<double, std::milli>(end - start).count();
-    Logger::debug(std::format("  Density sample generation {}ms", position.x, position.y, position.z));
+    Logger::debug(std::format("  Density sample generation {}ms", m));
 
 
     start = std::chrono::high_resolution_clock::now();
@@ -109,7 +109,7 @@ void Chunk::generate() {
                 for (int i = 0; i < 8; ++i) {
                     if (cornerDensities[i] < ISO) cube |= (1 << i);
                 }
-z
+
                 int edges = edgeTable[cube];
 
                 if (edges == 0) continue;
@@ -165,7 +165,7 @@ z
     }
     end = std::chrono::high_resolution_clock::now();
     m = std::chrono::duration<double, std::milli>(end - start).count();
-    Logger::debug(std::format("  Mesh generation            {}ms", m));
+    Logger::debug(std::format("  Mesh generation           {}ms", m));
 
 
     glCreateVertexArrays(1, &vao);
@@ -183,7 +183,6 @@ z
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     glBindVertexArray(0);
-    Logger::debug(std::format("Chunk at ({}, {}, {}): uploaded vertices to GPU", position.x, position.y, position.z));
 }
 
 void Chunk::render() {
