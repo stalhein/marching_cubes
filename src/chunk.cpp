@@ -62,7 +62,7 @@ void Chunk::generate() {
             float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
             float base = baseValue*WORLD_HEIGHT*0.6f + WORLD_HEIGHT * 0.2f;
 
-            float detailValue = detailStrengthMap[z*(SIZE+3)+x] * detailMap[z*(SIZE+3) + x]*0.5f;
+            float detailValue = (detailStrengthMap[z*(SIZE+3)+x]+2.f * detailMap[z*(SIZE+3) + x];
             float detail = detailValue * WORLD_HEIGHT * 0.1;
 
             float height = base + detail + 1 - chunkY;
