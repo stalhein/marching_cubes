@@ -28,7 +28,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
 
     main->SetScale(800.f);
     mainFractal->SetSource(main);
-    mainFractal->SetOctaveCount(4);
+    mainFractal->SetOctaveCount(8);
     
     Logger::debug(std::format("Chunk at ({}, {}, {}): noises created", position.x, position.y, position.z));
 
