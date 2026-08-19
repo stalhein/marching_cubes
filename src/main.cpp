@@ -85,84 +85,84 @@ int main() {
         chunks[i].generate();
     }
 
-  int fbWidth, fbHeight;
-  glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
-  framebuffer_size_callback(window, fbWidth, fbHeight);
+    int fbWidth, fbHeight;
+    glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+    framebuffer_size_callback(window, fbWidth, fbHeight);
 
-  while (!glfwWindowShouldClose(window)) {
-    float currentTime = glfwGetTime();
-    deltaTime = currentTime - lastFrame;
-    lastFrame = currentTime;
+    while (!glfwWindowShouldClose(window)) {
+        float currentTime = glfwGetTime();
+        deltaTime = currentTime - lastFrame;
+        lastFrame = currentTime;
 
-    processInput(window);
+        processInput(window);
 
-    // Render
-    glClearColor(0.6f, 0.8f, 0.9f, 1.f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Render
+        glClearColor(0.6f, 0.8f, 0.9f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glm::mat4 projection = glm::perspective(
-      glm::radians(60.f), (float)w / (float)h, 0.001f, 1000.f 
-    );
+        glm::mat4 projection = glm::perspective(
+            glm::radians(60.f), (float)w / (float)h, 0.001f, 1000.f 
+        );
     
-    shader.use();
-    shader.setMat4("uProjection", projection);
-    shader.setMat4("uView", camera.getViewMatrix());
+        shader.use();
+        shader.setMat4("uProjection", projection);
+        shader.setMat4("uView", camera.getViewMatrix());
 
-    for (auto chunk : chunks) {
-      shader.setMat4("uModel", chunk.model);
-      chunk.render();
+        for (auto chunk : chunks) {
+            shader.setMat4("uModel", chunk.model);
+            chunk.render();
+        }
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-  }
+    glfwDestroyWindow(window);
+    glfwTerminate();
 
-  glfwDestroyWindow(window);
-  glfwTerminate();
-
-  return 0;
+    return 0;
 }
 
 void framebuffer_size_callback(GLFWwindow *, int width, int height) {
-  glViewport(0, 0, width, height);
-  w = width;
-  h = height;
+    glViewport(0, 0, width, height);
+    w = width;
+    h = height;
 }
 
 void mouse_callback(GLFWwindow *window, double xposIn, double yposIn) {
-  float xpos = static_cast<float>(xposIn);
-  float ypos = static_cast<float>(yposIn);
+    float xpos = static_cast<float>(xposIn);
+    float ypos = static_cast<float>(yposIn);
 
-  if (firstMouse) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+
     lastX = xpos;
     lastY = ypos;
-    firstMouse = false;
-  }
 
-  float xoffset = xpos - lastX;
-  float yoffset = lastY - ypos;
-
-  lastX = xpos;
-  lastY = ypos;
-
-  camera.processMouse(xoffset, yoffset);
+    camera.processMouse(xoffset, yoffset);
 }
 
 void processInput(GLFWwindow *window) {
-  if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-    glfwSetWindowShouldClose(window, true);
-  }
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-    camera.processKeyboard(FORWARD, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-    camera.processKeyboard(BACKWARD, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-    camera.processKeyboard(UP, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-    camera.processKeyboard(DOWN, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-    camera.processKeyboard(RIGHT, deltaTime);
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-    camera.processKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.processKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.processKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera.processKeyboard(UP, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        camera.processKeyboard(DOWN, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.processKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.processKeyboard(LEFT, deltaTime);
 }

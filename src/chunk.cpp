@@ -1,51 +1,51 @@
 #include "chunk.hpp"
 
 glm::vec3 interpolateVertex(glm::vec3 p1, glm::vec3 p2, float d1, float d2) {
-  float t = (ISO - d1) / (d2 - d1);
-  return p1 + t * (p2 - p1);
+    float t = (ISO - d1) / (d2 - d1);
+    return p1 + t * (p2 - p1);
 }
 
 glm::vec3 Chunk::getNormal(int x, int y, int z) {
-  const int eps = 1;
-  float dx = paddedDensities[idx(x+eps, y, z)] - paddedDensities[idx(x-eps, y, z)];
-  float dy = paddedDensities[idx(x, y+eps, z)] - paddedDensities[idx(x, y-eps, z)];
-  float dz = paddedDensities[idx(x, y, z+eps)] - paddedDensities[idx(x, y, z-eps)];
+    const int eps = 1;
+    float dx = paddedDensities[idx(x+eps, y, z)] - paddedDensities[idx(x-eps, y, z)];
+    float dy = paddedDensities[idx(x, y+eps, z)] - paddedDensities[idx(x, y-eps, z)];
+    float dz = paddedDensities[idx(x, y, z+eps)] - paddedDensities[idx(x, y, z-eps)];
 
-  return -glm::normalize(glm::vec3(dx, dy, dz));
+    return -glm::normalize(glm::vec3(dx, dy, dz));
 }
 
 Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
-  model = glm::translate(
-    glm::mat4(1.0f),
-    position * (float)SIZE
-  );
+    model = glm::translate(
+        glm::mat4(1.0f),
+        position * (float)SIZE
+    );
 
-  main = FastNoise::New<FastNoise::Simplex>();
-  mainFractal = FastNoise::New<FastNoise::FractalRidged>();
-  detail = FastNoise::New<FastNoise::Simplex>();
-  detailFractal = FastNoise::New<FastNoise::FractalFBm>();
+    main = FastNoise::New<FastNoise::Simplex>();
+    mainFractal = FastNoise::New<FastNoise::FractalRidged>();
+    detail = FastNoise::New<FastNoise::Simplex>();
+    detailFractal = FastNoise::New<FastNoise::FractalFBm>();
 
-  main->SetScale(1000.f);
-  detail->SetScale(120.f);
-  mainFractal->SetSource(main);
-  mainFractal->SetOctaveCount(4);
-  detailFractal->SetSource(detail);
-  detailFractal->SetOctaveCount(5);
+    main->SetScale(1000.f);
+    detail->SetScale(120.f);
+    mainFractal->SetSource(main);
+    mainFractal->SetOctaveCount(4);
+    detailFractal->SetSource(detail);
+    detailFractal->SetOctaveCount(5);
 }
 
 void Chunk::generate() {
-  int chunkX = position.x * SIZE;
-  int chunkY = position.y * SIZE;
-  int chunkZ = position.z * SIZE;
+    int chunkX = position.x * SIZE;
+    int chunkY = position.y * SIZE;
+    int chunkZ = position.z * SIZE;
 
-  mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
-  detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
+    mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+    detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
 
-  #pragma omp parallel for collapse(3)
-  for (int x = -1; x <= SIZE+1; ++x) {
-    for (int y = -1; y <= SIZE+1; ++y) {
-      for (int z = -1; z <= SIZE+1; ++z) {
-        float heightValue = (heightMap[(z+1) * (SIZE+3) + x + 1]+1.f)*0.5f;
+    #pragma omp parallel for collapse(3)
+    for (int x = -1; x <= SIZE+1; ++x) {
+        for (int y = -1; y <= SIZE+1; ++y) {
+            for (int z = -1; z <= SIZE+1; ++z) {
+                float heightValue = (heightMap[(z+1) * (SIZE+3) + x + 1]+1.f)*0.5f;
         float detailValue = (detailDensities[(z+1)*(SIZE+3)*(SIZE+3)+(y+1)*(SIZE+3)+x+1]+1.f)*0.5f;
 
         float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
