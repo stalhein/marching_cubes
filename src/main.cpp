@@ -69,7 +69,7 @@ int main() {
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
-    std::cout << multiplication_of_prime_factors(10) << std::endl;
+    std::cout << multiplication_of_prime_factors(0) << std::endl;
 
     Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
 
