@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     while (1) {
         char command[512];
         snprintf(command, sizeof(command),
-                "git add . && git commit -m \"Commit #%d to stop hours being deducted because a commit per 1.4 hours is so substandard and so I don't have to get 3 hours for another ship because now I'm 0.6 hours behind what I wanted from the shop. Currently implementing helper functions to clear up codebase.\" && git push", commit);
+                "git add . && git commit -m \"Commit #%d to stop hours being deducted because a commit per 1.4 hours is so substandard and so I don't have to get 3 hours for another ship because now I'm 0.6 hours behind what I wanted from the shop. Currently verbose mode for debugging.\" && git push", commit);
 
         int r = system(command);
         if (r != 0) {

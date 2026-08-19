@@ -33,6 +33,15 @@ void glfw_error_callback(int error, const char* description) {
 }
 
 int main(int argc, char *argv[]) {
+    bool verbose = false;
+
+    for (int i = 0; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--verbose") == 0) {
+            verbose = true;
+        }
+    }
+
+
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cout << "Failed to initialize glfw." << std::endl;
