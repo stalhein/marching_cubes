@@ -30,6 +30,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 find_package(OpenGL REQUIRED)
+find_package(OpenMP REQUIRED)
 
 
 
@@ -49,12 +50,19 @@ target_include_directories(MarchingCubes PRIVATE
 target_link_libraries(MarchingCubes PRIVATE
   glfw
   OpenGL::GL
+  OpenMP::OpenMP_CXX
   glm::glm
   FastNoise
 )
 
-if (WIN32)
+if(WIN32)
   target_link_libraries(MarchingCubes PRIVATE OpenGL32)
+endif()
+
+if(MSVC)
+    add_compile_options(/arch:AVX2)
+else()
+    add_compile_options(-march=native)
 endif()
 
 add_custom_target(run
