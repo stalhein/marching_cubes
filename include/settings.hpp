@@ -13,6 +13,8 @@ constexpr int SCR_WIDTH = 800;
 constexpr int SCR_HEIGHT = 600;
 
 inline int multiplication_of_prime_factors(int a) {
+    if (a <= 0) return a;
+
     int n = a;
 
     // Get prime factors

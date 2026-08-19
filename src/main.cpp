@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cstring>
 
 #include "shader.hpp"
 #include "camera.hpp"
@@ -31,7 +32,7 @@ void glfw_error_callback(int error, const char* description) {
             << ": " << description << '\n';
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cout << "Failed to initialize glfw." << std::endl;
