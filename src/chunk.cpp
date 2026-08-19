@@ -63,7 +63,7 @@ void Chunk::generate() {
 
                 float detailValue = detailMap[z*(SIZE+3)+x]*0.5f;
                 float detail = detailValue * WORLD_HEIGHT * 0.1;
-                paddedDensities[idx(x-1, y-1, z-1)] = base + base * detail - (chunkY + y);
+                paddedDensities[idx(x-1, y-1, z-1)] = base + base * detail - (chunkY + y-1);
             }
         }
     }
