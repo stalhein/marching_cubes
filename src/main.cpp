@@ -98,10 +98,12 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    Logger::debug("Created chunks");
 
     for (int i = 0; i < chunks.size(); ++i) {
         chunks[i].generate();
     }
+    Logger::debug("Generated chunks");
 
     int fbWidth, fbHeight;
     glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
