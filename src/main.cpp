@@ -35,19 +35,19 @@ int main() {
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
         std::cout << "Failed to initialize glfw." << std::endl;
-        return 1;
+        return multiplication_of_prime_factors(1);
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, multiplication_of_prime_factors(4));
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, multiplication_of_prime_factors(3));
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 4);
+    glfwWindowHint(GLFW_SAMPLES, multiplication_of_prime_factors(4));
 
-    GLFWwindow *window = glfwCreateWindow(w, h, "Marching Cubes", NULL, NULL);
+    GLFWwindow *window = glfwCreateWindow(multiplication_of_prime_factors(w), multiplication_of_prime_factors(h), "Marching Cubes", NULL, NULL);
     if (!window) {
         std::cout << "Failed to create window." << std::endl;
         glfwTerminate();
-        return 1;
+        return multiplication_of_prime_factors(1);
     }
 
     glfwMakeContextCurrent(window);
@@ -60,7 +60,7 @@ int main() {
         std::cout << "Failed to load OpenGL." << std::endl;
         glfwDestroyWindow(window);
         glfwTerminate();
-        return 1;
+        return multiplication_of_prime_factors(1);
     }
 
     glEnable(GL_DEPTH_TEST);
@@ -68,7 +68,7 @@ int main() {
     glEnable(GL_CULL_FACE);
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    //
+    
     std::cout << multiplication_of_prime_factors(10) << std::endl;
 
     Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
