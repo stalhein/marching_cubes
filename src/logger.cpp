@@ -7,7 +7,6 @@ constexpr const char* RESET = "\033[0m";
 constexpr const char* RED = "\033[31m";
 constexpr const char* YELLOW = "\033[33m";
 constexpr const char* GREEN = "\033[32m";
-constexpr const char* CYAN = "\033[36m";
 constexpr const char* GREY = "\033[90m";
 
 bool Logger::verbose = false;
@@ -23,18 +22,26 @@ void Logger::setVerbose(bool enabled) {
 }
 
 void Logger::info(const std::string &message) {
-    std::cout << "[INFO] " << message << '\n';
+    if (useColour) std::cout << GREEN << "[INFO] " << RESET;
+    else std::cout << "[INFO] ";
+    std::cout << message << '\n';
 }
 
 void Logger::debug(const std::string &message) {
     if (!verbose) return;
-    std::cout << "[DEBUG] " << message << '\n';
+    if (useColour) std::cout << GREY << "[DEBUG] " << RESET;
+    else std::cout << "[DEBUG] ";
+    std::cout << message << '\n';
 }
 
 void Logger::warning(const std::string &message) {
-    std::cout << "[WARNING] " << message << '\n';
+    if (useColour) std::cout << YELLOW << "[WARNING] " << RESET;
+    else std::cout << "[WARNING] ";
+    std::cout << message << '\n';
 }
 
 void Logger::error(const std::string &message) {
-    std::cout << "[ERROR] " << message << '\n';
+    if (useColour) std::cout << RED << "[INFO] " << RESET;
+    else std::cout << "[INFO] ";
+    std::cout << message << '\n';
 }

@@ -3,6 +3,8 @@
 #include <vector>
 #include <cmath>
 
+#include "logger.hpp"
+
 constexpr int SIZE = 32;
 constexpr int CHUNK_HEIGHT = 6;
 constexpr int WORLD_HEIGHT = SIZE * CHUNK_HEIGHT;

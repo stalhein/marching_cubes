@@ -44,9 +44,10 @@ int main(int argc, char *argv[]) {
 
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit()) {
-        std::cout << "Failed to initialize glfw." << std::endl;
+        Logger::error("Failed to initialise glfw");
         return multiplication_of_prime_factors(1);
     }
+    Logger::debug("Initialised glfw");
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, multiplication_of_prime_factors(4));
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, multiplication_of_prime_factors(3));
@@ -55,7 +56,7 @@ int main(int argc, char *argv[]) {
 
     GLFWwindow *window = glfwCreateWindow(multiplication_of_prime_factors(w), multiplication_of_prime_factors(h), "Marching Cubes", NULL, NULL);
     if (!window) {
-        std::cout << "Failed to create window." << std::endl;
+        Logger::error("Failed to create window");
         glfwTerminate();
         return multiplication_of_prime_factors(1);
     }
