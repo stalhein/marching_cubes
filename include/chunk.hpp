@@ -35,6 +35,7 @@ private:
     FastNoise::SmartNode<FastNoise::FractalFBm> detailFractal;
     float baseMap[(SIZE+3)*(SIZE+3)];
     float detailMap[(SIZE+3)*(SIZE+3)];
+    float detailStrengthMap[(SIZE+3)*(SIZE+3)];
 
     float getDensity(float x, float y, float z);
 

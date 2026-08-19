@@ -50,6 +50,8 @@ void Chunk::generate() {
     {
         #pragma omp section
         mainFractal->GenUniformGrid2D(baseMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
+        #pragma omp section
+        mainFractal->GenUniformGrid2D(detailStrengthMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 4321);
         #pragma omp section 
         detailFractal->GenUniformGrid2D(detailMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
     }
@@ -63,7 +65,7 @@ void Chunk::generate() {
 
                 float detailValue = detailMap[z*(SIZE+3)+x]*0.5f;
                 float detail = detailValue * WORLD_HEIGHT * 0.1;
-                paddedDensities[idx(x-1, y-1, z-1)] = base + base * detail - (chunkY + y-1);
+                paddedDensities[idx(x-1, y-1, z-1)] = base + detail - (chunkY + y-1);
             }
         }
     }
