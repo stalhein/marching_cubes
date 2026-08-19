@@ -24,15 +24,18 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     Logger::debug(std::format("Chunk at ({}, {}, {}): model matrix calculated", position.x, position.y, position.z));
 
     main = FastNoise::New<FastNoise::Simplex>();
-    mainFractal = FastNoise::New<FastNoise::FractalFBm>();
+    mainFractal = FastNoise::New<FastNoise::FractalRidged>();
+    detail = FastNoise::New<FastNoise::Simplex>();
+    detailFractal = FastNoise::New<FastNoise::FractalFBm>();
 
     main->SetScale(800.f);
     mainFractal->SetSource(main);
-    mainFractal->SetOctaveCount(8);
+    mainFractal->SetOctaveCount(4);
+    detail->SetScale(50.f);
+    detailFractal->SetSource(detail);
+    detailFractal->SetOctaveCount(4);
     
     Logger::debug(std::format("Chunk at ({}, {}, {}): noises created", position.x, position.y, position.z));
-
-
 }
 
 void Chunk::generate() {
