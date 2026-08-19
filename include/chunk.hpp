@@ -30,11 +30,8 @@ private:
     glm::vec3 gradients[(SIZE+1)*(SIZE+1)*(SIZE+1)];
     std::vector<float> vertices;
     FastNoise::SmartNode<FastNoise::Simplex> main;
-    FastNoise::SmartNode<FastNoise::FractalRidged> mainFractal;
-    FastNoise::SmartNode<FastNoise::Simplex> detail;
-    FastNoise::SmartNode<FastNoise::FractalFBm> detailFractal;
+    FastNoise::SmartNode<FastNoise::FractalFBm> mainFractal;
     float heightMap[(SIZE+3)*(SIZE+3)];
-    float detailDensities[(SIZE+3)*(SIZE+3)*(SIZE+3)];
 
     float getDensity(float x, float y, float z);
 

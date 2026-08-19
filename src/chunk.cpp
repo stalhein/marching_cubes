@@ -24,16 +24,11 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     Logger::debug(std::format("Chunk at ({}, {}, {}): model matrix calculated", position.x, position.y, position.z));
 
     main = FastNoise::New<FastNoise::Simplex>();
-    mainFractal = FastNoise::New<FastNoise::FractalRidged>();
-    detail = FastNoise::New<FastNoise::Simplex>();
-    detailFractal = FastNoise::New<FastNoise::FractalFBm>();
+    mainFractal = FastNoise::New<FastNoise::FractalFBm>();
 
-    main->SetScale(1000.f);
-    detail->SetScale(120.f);
+    main->SetScale(800.f);
     mainFractal->SetSource(main);
     mainFractal->SetOctaveCount(2);
-    detailFractal->SetSource(detail);
-    detailFractal->SetOctaveCount(5);
     
     Logger::debug(std::format("Chunk at ({}, {}, {}): noises created", position.x, position.y, position.z));
 
@@ -52,8 +47,6 @@ void Chunk::generate() {
     {
         #pragma omp section
         mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
-        #pragma omp section
-        detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
     }
 
     #pragma omp parallel for collapse(3) schedule(static)
@@ -61,10 +54,9 @@ void Chunk::generate() {
         for (int y = 0; y <= SIZE+2; ++y) {
             for (int z = 0; z <= SIZE+2; ++z) {
                 float heightValue = (heightMap[z * (SIZE+3) + x]+1.f)*0.5f;
-                float detailValue = (detailDensities[z*(SIZE+3)*(SIZE+3)+y*(SIZE+3)+x]+1.f)*0.5f;
 
                 float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
-                paddedDensities[idx(x-1, y-1, z-1)] = base + detailValue*WORLD_HEIGHT * 0.1;
+                paddedDensities[idx(x-1, y-1, z-1)] = base;
             }
         }
     }
