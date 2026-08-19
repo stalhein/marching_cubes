@@ -1,4 +1,5 @@
 #include "chunk.hpp"
+#include <chrono>
 
 glm::vec3 interpolateVertex(glm::vec3 p1, glm::vec3 p2, float d1, float d2) {
     float t = (ISO - d1) / (d2 - d1);
@@ -44,6 +45,7 @@ void Chunk::generate() {
     int chunkY = position.y * SIZE;
     int chunkZ = position.z * SIZE;
 
+    auto start = std::chrono::high_resolution_clock::now();
     mainFractal->GenUniformGrid2D(heightMap, chunkX-1, chunkZ-1, SIZE+3, SIZE+3, 1.f, 1.f, 1234);
     detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
 
@@ -59,7 +61,9 @@ void Chunk::generate() {
             }
         }
     }
-    Logger::debug(std::format("Chunk at ({}, {}, {}): densities array calculated", position.x, position.y, position.z));
+    auto end = std::chrono::high_resolution_clock::now();
+    double m = std::chrono::duration<double, std::milli>(end - start).count();
+    Logger::debug(std::format("  Density sample generation {}ms", position.x, position.y, position.z));
 
 
     vertices.reserve(SIZE*SIZE*SIZE*5);
