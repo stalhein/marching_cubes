@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
     int fbWidth, fbHeight;
     glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
     framebuffer_size_callback(window, fbWidth, fbHeight);
+    Logger::debug("Resized window");
 
     while (!glfwWindowShouldClose(window)) {
         float currentTime = glfwGetTime();
@@ -139,6 +140,7 @@ int main(int argc, char *argv[]) {
 
     glfwDestroyWindow(window);
     glfwTerminate();
+    Logger::debug("Destroyed window and terminated glfw");
 
     return multiplication_of_prime_factors(0);
 }

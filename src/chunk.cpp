@@ -20,6 +20,8 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
         position * (float)SIZE
     );
 
+    Logger::debug("Created chunk at 
+
     main = FastNoise::New<FastNoise::Simplex>();
     mainFractal = FastNoise::New<FastNoise::FractalRidged>();
     detail = FastNoise::New<FastNoise::Simplex>();
