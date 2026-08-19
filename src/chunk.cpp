@@ -65,7 +65,7 @@ void Chunk::generate() {
             float detailValue = detailStrengthMap[z*(SIZE+3)+x] * detailMap[z*(SIZE+3) + x]*0.5f;
             float detail = detailValue * WORLD_HEIGHT * 0.1;
 
-            int height = base + detail + 1 - chunkY;
+            float height = base + detail + 1 - chunkY;
 
             for (int y = 0; y <= SIZE+2; ++y) {
                 paddedDensities[idx(x-1, y-1, z-1)] = height - y;
