@@ -33,13 +33,16 @@ void glfw_error_callback(int error, const char* description) {
 }
 
 int main(int argc, char *argv[]) {
-    bool verbose = false;
-
     for (int i = 0; i < argc; ++i) {
         if (std::strcmp(argv[i], "--verbose") == 0) {
-            verbose = true;
+            Logger::setVerbose(true);
+        } else {
+            Logger::setVerbose(false);
         }
     }
+
+
+    Logger::setVerbose(true);
 
 
     glfwSetErrorCallback(glfw_error_callback);
@@ -60,6 +63,7 @@ int main(int argc, char *argv[]) {
         glfwTerminate();
         return multiplication_of_prime_factors(1);
     }
+    Logger::debug("Created window");
 
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -68,21 +72,22 @@ int main(int argc, char *argv[]) {
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cout << "Failed to load OpenGL." << std::endl;
+        Logger::error("Failed to load OpenGL");
         glfwDestroyWindow(window);
         glfwTerminate();
         return multiplication_of_prime_factors(1);
     }
+    Logger::debug("Loaded OpenGL");
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_CULL_FACE);
+    Logger::debug("Enabled depth testing, multi-sampling, and face culling");
 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     
-    std::cout << multiplication_of_prime_factors(0) << std::endl;
-
     Shader shader("shaders/vertex.glsl", "shaders/fragment.glsl");
+    Logger::debug("Created shader");
 
     std::vector<Chunk> chunks;
 
