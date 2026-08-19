@@ -56,15 +56,15 @@ void Chunk::generate() {
         detailFractal->GenUniformGrid3D(detailDensities, chunkX-1, chunkY-1, chunkZ-1, SIZE+3, SIZE+3, SIZE+3, 1.f, 1.f, 1.f, 1483);
     }
 
-    #pragma omp parallel for collapse(3)
-    for (int x = -1; x <= SIZE+1; ++x) {
-        for (int y = -1; y <= SIZE+1; ++y) {
-            for (int z = -1; z <= SIZE+1; ++z) {
-                float heightValue = (heightMap[(z+1) * (SIZE+3) + x + 1]+1.f)*0.5f;
-                float detailValue = (detailDensities[(z+1)*(SIZE+3)*(SIZE+3)+(y+1)*(SIZE+3)+x+1]+1.f)*0.5f;
+    #pragma omp parallel for collapse(3) schedule(static)
+    for (int x = 0; x <= SIZE+2; ++x) {
+        for (int y = 0; y <= SIZE+2; ++y) {
+            for (int z = 0; z <= SIZE+2; ++z) {
+                float heightValue = (heightMap[z * (SIZE+3) + x]+1.f)*0.5f;
+                float detailValue = (detailDensities[z*(SIZE+3)*(SIZE+3)+y*(SIZE+3)+x]+1.f)*0.5f;
 
                 float base = heightValue*WORLD_HEIGHT*0.4f + WORLD_HEIGHT * 0.3 - (chunkY+y);
-                paddedDensities[idx(x, y, z)] = base + detailValue*WORLD_HEIGHT * 0.1;
+                paddedDensities[idx(x-1, y-1, z-1)] = base + detailValue*WORLD_HEIGHT * 0.1;
             }
         }
     }
