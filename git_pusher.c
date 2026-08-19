@@ -17,12 +17,12 @@ int main(int argc, char *argv[]) {
     if (argc != 2) return -1;
     int pause = str_to_int(argv[1], strlen(argv[1]));
 
-    int commit = 1;
+    int commit = 6;
 
     while (1) {
         char command[512];
         snprintf(command, sizeof(command),
-                "git add . && git commit -m \"Commit #%d to stop hours being deducted because a commit per 1.4 hours is so substandard and so I don't have to get 3 hours for another ship because now I'm 0.6 hours behind what I wanted from the shop.\" && git push", commit);
+                "git add . && git commit -m \"Commit #%d to stop hours being deducted because a commit per 1.4 hours is so substandard and so I don't have to get 3 hours for another ship because now I'm 0.6 hours behind what I wanted from the shop. Currently refactoring codebase from using 2 space tabs to using 4 space tabs.\" && git push", commit);
 
         int r = system(command);
         if (r != 0) {

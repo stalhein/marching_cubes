@@ -108,69 +108,69 @@ void Chunk::generate() {
                     int b = edgeConnexions[i][1];
                     float f = (ISO - cornerDensities[a]) / (cornerDensities[b] - cornerDensities[a]);
                     edgeVertices[i] = cornerPositions[a] + f * (cornerPositions[b] - cornerPositions[a]);
-        }
+                }
 
-        for (int i = 0; triTable[cube][i] != -1; i+=3) {
-          int a = triTable[cube][i];
-          int b = triTable[cube][i+1];
-          int c = triTable[cube][i+2];
+                for (int i = 0; triTable[cube][i] != -1; i+=3) {
+                    int a = triTable[cube][i];
+                    int b = triTable[cube][i+1];
+                    int c = triTable[cube][i+2];
 
-          glm::vec3 v1 = {edgeVertices[a][0], edgeVertices[a][1], edgeVertices[a][2]};
-          glm::vec3 v2 = {edgeVertices[b][0], edgeVertices[b][1], edgeVertices[b][2]};
-          glm::vec3 v3 = {edgeVertices[c][0], edgeVertices[c][1], edgeVertices[c][2]};
+                    glm::vec3 v1 = {edgeVertices[a][0], edgeVertices[a][1], edgeVertices[a][2]};
+                    glm::vec3 v2 = {edgeVertices[b][0], edgeVertices[b][1], edgeVertices[b][2]};
+                    glm::vec3 v3 = {edgeVertices[c][0], edgeVertices[c][1], edgeVertices[c][2]};
 
-          glm::vec3 edge1 = v2 - v1;
-          glm::vec3 edge2 = v3 - v1;
-          glm::vec3 n = glm::normalize(glm::cross(edge1, edge2));
+                    glm::vec3 edge1 = v2 - v1;
+                    glm::vec3 edge2 = v3 - v1;
+                    glm::vec3 n = glm::normalize(glm::cross(edge1, edge2));
 
-          vertices.push_back(v1.x);
-          vertices.push_back(v1.y);
-          vertices.push_back(v1.z);
+                    vertices.push_back(v1.x);
+                    vertices.push_back(v1.y);
+                    vertices.push_back(v1.z);
 
-          vertices.push_back(n.x);
-          vertices.push_back(n.y);
-          vertices.push_back(n.z);
+                    vertices.push_back(n.x);
+                    vertices.push_back(n.y);
+                    vertices.push_back(n.z);
 
-          vertices.push_back(v2.x);
-          vertices.push_back(v2.y);
-          vertices.push_back(v2.z);
+                    vertices.push_back(v2.x);
+                    vertices.push_back(v2.y);
+                    vertices.push_back(v2.z);
 
-          vertices.push_back(n.x);
-          vertices.push_back(n.y);
-          vertices.push_back(n.z);
+                    vertices.push_back(n.x);
+                    vertices.push_back(n.y);
+                    vertices.push_back(n.z);
          
-          vertices.push_back(v3.x);
-          vertices.push_back(v3.y);
-          vertices.push_back(v3.z);
+                    vertices.push_back(v3.x);
+                    vertices.push_back(v3.y);
+                    vertices.push_back(v3.z);
         
-          vertices.push_back(n.x);
-          vertices.push_back(n.y);
-          vertices.push_back(n.z);
+                    vertices.push_back(n.x);
+                    vertices.push_back(n.y);
+                    vertices.push_back(n.z);
+                }
+            }
         }
-      }
     }
-  }
 
 
-  glCreateVertexArrays(1, &vao);
-  glCreateBuffers(1, &vbo);
+    glCreateVertexArrays(1, &vao);
+    glCreateBuffers(1, &vbo);
 
-  glBindVertexArray(vao);
-  glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
-  glBindVertexArray(0);
+    glBindVertexArray(0);
 }
 
 void Chunk::render() {
-  glBindVertexArray(vao);
-  glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
-  glBindVertexArray(0);
+    glBindVertexArray(vao);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 6);
+    glBindVertexArray(0);
 }
