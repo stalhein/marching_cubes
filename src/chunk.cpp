@@ -31,7 +31,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     main->SetScale(1000.f);
     mainFractal->SetSource(main);
     mainFractal->SetOctaveCount(4);
-    detail->SetScale(50.f);
+    detail->SetScale(100.f);
     detailFractal->SetSource(detail);
     detailFractal->SetOctaveCount(4);
     
@@ -64,9 +64,11 @@ void Chunk::generate() {
 
             float detailValue = detailStrengthMap[z*(SIZE+3)+x] * detailMap[z*(SIZE+3)+x]*0.5f;
             float detail = detailValue * WORLD_HEIGHT * 0.1;
-            paddedDensities[idx(x-1, y-1, z-1)] = base + detail - (chunkY + y-1);
+
+            int height = base + detail + 1 - chunkY;
 
             for (int y = 0; y <= SIZE+2; ++y) {
+                paddedDensities[idx(x-1, y-1, z-1)] = height - y;
             }
         }
     }
