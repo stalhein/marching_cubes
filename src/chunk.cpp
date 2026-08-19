@@ -20,7 +20,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
         position * (float)SIZE
     );
 
-    Logger::debug("Created chunk at 
+    Logger::debug(std::format("Created chunk at ({}, {}, {})", position.x, position.y, position.z));
 
     main = FastNoise::New<FastNoise::Simplex>();
     mainFractal = FastNoise::New<FastNoise::FractalRidged>();
