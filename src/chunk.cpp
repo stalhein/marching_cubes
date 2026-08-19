@@ -41,6 +41,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
 }
 
 void Chunk::generate() {
+    Logger::debug(std::format("Chunk ({}, {}, {})", position.x, position.y, position.z));
     int chunkX = position.x * SIZE;
     int chunkY = position.y * SIZE;
     int chunkZ = position.z * SIZE;
@@ -66,6 +67,7 @@ void Chunk::generate() {
     Logger::debug(std::format("  Density sample generation {}ms", position.x, position.y, position.z));
 
 
+    start = std::chrono::high_resolution_clock::now();
     vertices.reserve(SIZE*SIZE*SIZE*5);
     #pragma omp parallel for collapse(3)
     for (int x = 0; x < SIZE; ++x) {
@@ -107,7 +109,7 @@ void Chunk::generate() {
                 for (int i = 0; i < 8; ++i) {
                     if (cornerDensities[i] < ISO) cube |= (1 << i);
                 }
-
+z
                 int edges = edgeTable[cube];
 
                 if (edges == 0) continue;
@@ -161,7 +163,9 @@ void Chunk::generate() {
             }
         }
     }
-    Logger::debug(std::format("Chunk at ({}, {}, {}): marching cubes created vertices vector", position.x, position.y, position.z));
+    end = std::chrono::high_resolution_clock::now();
+    m = std::chrono::duration<double, std::milli>(end - start).count();
+    Logger::debug(std::format("  Mesh generation            {}ms", m));
 
 
     glCreateVertexArrays(1, &vao);
