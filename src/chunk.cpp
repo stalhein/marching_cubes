@@ -20,7 +20,7 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
         position * (float)SIZE
     );
 
-    Logger::debug(std::format("Created chunk at ({}, {}, {})", position.x, position.y, position.z));
+    Logger::debug(std::format("Chunk at ({}, {}, {}): model matrix calculated", position.x, position.y, position.z));
 
     main = FastNoise::New<FastNoise::Simplex>();
     mainFractal = FastNoise::New<FastNoise::FractalRidged>();
@@ -33,6 +33,10 @@ Chunk::Chunk(glm::vec3 chunkPosition) : position(chunkPosition) {
     mainFractal->SetOctaveCount(4);
     detailFractal->SetSource(detail);
     detailFractal->SetOctaveCount(5);
+    
+    Logger::debug(std::format("Chunk at ({}, {}, {}): noises created", position.x, position.y, position.z));
+
+
 }
 
 void Chunk::generate() {
@@ -55,6 +59,7 @@ void Chunk::generate() {
             }
         }
     }
+    Logger::debug(std::format("Chunk at ({}, {}, {}): densities array calculated", position.x, position.y, position.z));
 
 
     vertices.reserve(SIZE*SIZE*SIZE*5);
@@ -152,6 +157,7 @@ void Chunk::generate() {
             }
         }
     }
+    Logger::debug(std::format("Chunk at ({}, {}, {}): marching cubes created vertices vector", position.x, position.y, position.z));
 
 
     glCreateVertexArrays(1, &vao);
@@ -169,6 +175,7 @@ void Chunk::generate() {
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
 
     glBindVertexArray(0);
+    Logger::debug(std::format("Chunk at ({}, {}, {}): uploaded vertices to GPU", position.x, position.y, position.z));
 }
 
 void Chunk::render() {
