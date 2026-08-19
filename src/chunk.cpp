@@ -59,10 +59,11 @@ void Chunk::generate() {
         for (int y = 0; y <= SIZE+2; ++y) {
             for (int z = 0; z <= SIZE+2; ++z) {
                 float baseValue = (baseMap[z * (SIZE+3) + x]+1.f)*0.5f;
-                float base = baseValue*WORLD_HEIGHT*0.25f + WORLD_HEIGHT * 0.5 - (chunkY+y);
+                float base = baseValue*WORLD_HEIGHT*0.2f + WORLD_HEIGHT * 0.6;
 
-                float detail = detailMap[z*(SIZE+3)+x]*0.5f * WORLD_HEIGHT * 0.1 - (chunkY + y);
-                paddedDensities[idx(x-1, y-1, z-1)] = base + detail;
+                float detailValue = detailMap[z*(SIZE+3)+x]*0.5f;
+                float detail = detailValue * WORLD_HEIGHT * 0.1;
+                paddedDensities[idx(x-1, y-1, z-1)] = base - (chunkY + y);
             }
         }
     }
